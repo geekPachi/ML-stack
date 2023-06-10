@@ -2,7 +2,7 @@
 import pandas as pd
 
 import numpy as np
-df = pd.read_csv('heart_failure_clinical_records_dataset.csv')
+df = pd.read_csv('house_price.csv')
 x =  df.iloc[:,:-1].values
 y = df.iloc[:,-1].values
 y = y.reshape(len(y),1)
