@@ -1,1 +1,50 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.impute import SimpleImputer
+%matplotlib inline
 
+import warnings
+warnings.filterwarnings('ignore')
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+df = pd.read_csv("/kaggle/input/walmart-dataset/Walmart.csv")
+df.head()
+
+df.describe().style.background_gradient(cmap = 'YlGnBu')
+df.isnull().sum()
+
+df.shape
+
+df['Date'] = pd.to_datetime(df['Date'])
+df['Day'] = df['Date'].dt.weekday
+df['Week'] = df['Date'].dt.week
+df['Month'] = df['Date'].dt.month
+df['Year']  = df['Date'].dt.year
+df.drop('Date',axis=1,inplace=True)
+df.head()
+
+df.shape
+
+for i in df.columns:
+    print(f'{i}: {df[i].nunique()}')
+    
+    
+plt.pie(df['Year'].value_counts().values,labels =df['Year'].value_counts().index,
+       autopct='%1.2f%%',shadow=True,colors=['gold','red',"silver"])
+plt.title('Annual Sales')
+plt.show()
+
+df.columns
+
+plt.figure(figsize=(7,4))
+
+df.groupby('Store')['Weekly_Sales'].sum().plot(kind='bar')
+plt.title('Year-Wise Sales')
+
+plt.show()
