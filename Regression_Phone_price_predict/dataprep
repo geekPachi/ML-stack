@@ -1,1 +1,37 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+# Graphics
+# ==============================================================================
+import matplotlib.pyplot as plt
+from matplotlib import style
+import seaborn as sns
+
+data =pd.read_csv("/kaggle/input/mobile-price-prediction/Cellphone.csv")
+
+data.isnull().sum()
+
+colname = ["Product_id", "Price", "Sale", "Weight" , "Resolution", "PPI", "Cpu_Core","Cpu_Freq",
+           "Internal", "RAM", "RearCam", "FrontCam", "Battery", "Thickness"]
+data.columns = colname
+data
+
+plt.figure(figsize=(20,15))
+j = 1
+for i in data.iloc[:,:-1].columns:
+    plt.subplot(5,3,j)
+    sns.histplot(data[i], stat = "density", kde = True , color = "red")
+    j+=1
+
+sns.pairplot(data= data.drop(["Product_id"], axis =1))
+
+plt.subplots(figsize=(15, 5))
+sns.heatmap(data.drop(["Product_id"], axis =1 ).corr(), linewidths=.1, annot=True)
+
+X = data.drop(["Product_id", "Sale","Weight","Price"], axis =1)
+y = data.Price
+
+from sklearn.preprocessing import StandardScaler
+X=StandardScaler().fit_transform(X)
+
 
