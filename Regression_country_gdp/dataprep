@@ -1,1 +1,31 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+data = pd.read_csv('/kaggle/input/country-gdp/countries.csv')
+data
+
+data.isnull().sum()
+
+data.drop(['Rank'], axis=1, inplace=True)
+data
+
+data.drop(['ID'], axis=1, inplace=True)
+data
+
+data['Continent'].unique()
+
+data_group_continent = data.groupby('Continent').agg(Number_of_countries = ('Country', 'count')).reset_index()
+data_group_continent
+
+x = data_group_continent['Continent']
+y = data_group_continent['Number_of_countries']
+plt.bar(x, y)
+plt.xlabel('Continent')
+plt.ylabel('Number of countries')
+plt.title('Continent vs Number of Countries')
+plt.xticks(rotation = 45)
+plt.show()
+
 
