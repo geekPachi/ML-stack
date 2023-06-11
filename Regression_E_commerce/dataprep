@@ -1,1 +1,27 @@
 
+import pandas as pd
+import numpy as np
+
+with open('text_dataset.txt', 'r') as file:
+    df = file.read()
+    
+x = df.iloc[:,:-1].values
+y = df.iloc[:,-1].values
+
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.2, random_state=42)
+
+from sklearn.linear_model import linear_regression
+
+model = linear_regression()
+
+model.fit(x_train, y_train)
+
+y_pred = model.predict(x_test)
+
+from sklearn.metrics import r2_score 
+
+r2_score(y_test, y_pred)
+
+ 
