@@ -1,1 +1,25 @@
+import numpy as np 
+import pandas as pd 
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
 
+df = pd.read_csv('data.csv')
+
+x = df['Height'].values
+y = df['Weight'].values
+
+X = x.reshape(-1, 1)
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=.8, test_size=.2, random_state=100)
+
+plt.scatter(X_train, y_train, color='red')
+plt.xlabel('Height')
+plt.ylabel('Weight')
+plt.title('prediction Height and Weight')
+plt.show()
+
+lr = LinearRegression()
+lr.fit(X_train, y_train)
+y_predict = lr.predict(X_test)
+y_predict
