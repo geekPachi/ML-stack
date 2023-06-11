@@ -1,1 +1,101 @@
 
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+# Input data files are available in the read-only "../input/" directory
+# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+df = pd.read_csv('/kaggle/input/fruit-and-vegetable-prices/Fruit Prices 2020.csv')
+df
+
+import warnings
+warnings.simplefilter('ignore')
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from itertools import zip_longest
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import r2_score
+from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_error
+from sklearn.inspection import permutation_importance
+from sklearn.inspection import partial_dependence
+import shap
+
+
+%matplotlib inline
+plt.rcParams['xtick.direction'] = 'in'
+plt.rcParams['ytick.direction'] = 'in'
+plt.rcParams['xtick.minor.visible'] = False
+plt.rcParams['ytick.minor.visible'] = False
+
+df.insert(1, 'Fruit_Id', pd.factorize(df['Fruit'])[0])
+df.drop('Fruit',axis=1,inplace=True)
+df.insert(2, 'Form_Id', pd.factorize(df['Form'])[0])
+df.drop('Form',axis=1,inplace=True)
+df.insert(4, 'RetailPriceUnit_Id', pd.factorize(df['RetailPriceUnit'])[0])
+df.drop('RetailPriceUnit',axis=1,inplace=True)
+df.insert(7, 'CupEquivalentUnit_Id', pd.factorize(df['CupEquivalentUnit'])[0])
+df.drop('CupEquivalentUnit',axis=1,inplace=True)
+df
+
+
+print('Is there any NaN value in the dataset: ', df.isnull().values.any())
+
+fig, ax = plt.subplots(figsize=(10,10),dpi=130)
+sns.heatmap(df.corr(), ax=ax, annot=True, cmap='coolwarm')
+fig.show()
+
+
+X = df.drop('RetailPrice', axis=1)
+y = df['RetailPrice']
+
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=314)
+
+forest = RandomForestRegressor()
+
+forest.fit(X_train, y_train)
+
+y_test_pred = forest.predict(X_test)
+
+print('R2 : ', r2_score(y_test, y_test_pred))
+print('MAE : ',mean_absolute_error(y_test, y_test_pred))
+print('RMSE : ',np.sqrt(mean_squared_error(y_test, y_test_pred)))
+
+
+disp_min = 0
+disp_max = y.max() + 1
+fig, ax = plt.subplots(figsize=(5, 5))
+ax.scatter(y_test, y_test_pred)
+ax.plot([disp_min, disp_max], [disp_min, disp_max], color='black', linewidth=2.0)
+ax.set_xlim(disp_min, disp_max)
+ax.set_ylim(disp_min, disp_max)
+ax.set_xlabel('Observed')
+ax.set_ylabel('Predicted')
+ax.tick_params(pad=15)
+fig.tight_layout()
+fig.show()
+
+result = permutation_importance(forest, X_test, y_test, n_repeats=10, random_state=314)
+sorted_importances_idx = result.importances_mean.argsort()
+importances = pd.DataFrame(result.importances[sorted_importances_idx].T,
+                        columns=X_test.columns[sorted_importances_idx],)
+ax = importances.plot.box(vert=False, whis=10,fontsize=16)
+ax.axvline(x=0, color='k', linestyle='--')
+ax.set_xlabel('Decrease in accuracy score',fontsize=16)
+ax.figure.tight_layout()
+plt.show()
+plt.clf()
+plt.close()
+
+
+
