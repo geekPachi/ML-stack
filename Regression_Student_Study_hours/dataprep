@@ -1,1 +1,68 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
 
+df=pd.read_csv('/kaggle/input/student-study-hours/score.csv')
+df.head()
+
+x_train=df.Hours.values
+y_train=df.Scores.values
+print(type(x_train),type(y_train))
+x_train,y_train
+
+fig=plt.figure(figsize=(16,9),dpi=100)
+ax=fig.add_axes([0,0.1,0.3,0.3])
+ax.set_xlim(-1,100); ax.set_ylim(0,100)
+ax.scatter(x_train,y_train,color='red',marker='*')
+ax.set_title('Hours vs Score',fontsize='15'); ax.set_xlabel('Hours',fontsize='12'); ax.set_ylabel('Scores',fontsize='12')
+plt.show(); plt.close()
+
+
+range_x=x_train.max()-x_train.min()
+range_y=y_train.max()-y_train.min()
+print("Range of Hours(x)->",range_x,'\nRange of Scores(y)->',range_y)
+
+def z_score_normalize(x):
+    """
+    Computes normalized z-score of the given array
+    args:        x -> nd-array 
+    return:      x_norm -> normalized nd-array
+    """
+    mu=np.mean(x)
+    sigma=np.std(x)
+    x_norm=(x-mu)/sigma
+    return x_norm
+
+x_train_norm=z_score_normalize(x_train)
+y_train_norm=z_score_normalize(y_train)
+range_x=x_train_norm.max()-x_train_norm.min()
+range_y=y_train_norm.max()-y_train_norm.min()
+print("Normalised Range of Hours(x)->",range_x,'\nNormalised Range of Scores(y)->',range_y)
+x_train_norm,y_train_norm
+
+fig=plt.figure(figsize=(16,9),dpi=100)
+ax=fig.add_axes([0,0.1,0.3,0.3])
+ax.set_xlim(-2,2); ax.set_ylim(-2,2)
+ax.scatter(x_train_norm,y_train_norm,color='red',marker='*')
+ax.set_title('Hours vs Score',fontsize='15'); ax.set_xlabel('Hours',fontsize='12'); ax.set_ylabel('Scores',fontsize='12')
+plt.show(); plt.close()
+
+def cor_coef(x,y):
+    n=x.shape[0]
+    sq_x=np.square(x)
+    sq_y=np.square(y)
+    den=((n*np.sum(x**2))-(np.sum(x)**2))*((n*np.sum(y**2))-(np.sum(y)**2))
+    den=np.sqrt(den)
+    coeff=((n*np.sum(x*y))-(np.sum(x)*np.sum(y)))/den
+    return coeff
+
+coeff=cor_coef(x_train_norm,y_train_norm)
+if coeff>=0.5 or coeff<=-0.5:
+    print("Strong Correlation:",coeff)
+    
+    
+  rss=np.sum((y_train_norm-(wfin*x_train_norm+bfin))**2)
+tss=np.sum((y_train_norm-np.mean(y_train_norm))**2)
+coeff_deter=1-(rss/tss)
+print('The Regression Model is "{}" Accurate'.format(coeff_deter*100))
