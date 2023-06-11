@@ -1,1 +1,56 @@
+import pandas as pd
+import numpy as np
+
+X_train_csv = pd.read_csv('x_train.csv')
+y_train_csv = pd.read_csv('y_train.csv')
+X_test_csv = pd.read_csv('x_test.csv')
+y_test_csv = pd.read_csv('y_test.csv')
+
+import seaborn as sns
+
+from sklearn.preprocessing import LabelEncoder, RobustScaler
+from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.linear_model import LinearRegression
+from sklearn.ensemble import RandomForestRegressor, AdaBoostRegressor
+from sklearn.metrics import r2_score, mean_squared_error
+from xgboost import XGBRegressor
+
+
+### Delete "filghtId" columns
+X_train.drop(columns = ['filghtId'], inplace=True)
+X_test.drop(columns=['filghtId'],inplace=True)
+Y_train.drop(columns=['filghtId'], inplace=True)
+
+print(":: X_train ::", X_train.info())
+print("-------------------------------------------------------------")
+print(":: X_test ::", X_test.info())
+
+
+
+### check na/null 
+print("X_train null::",X_train.isna().sum().sum())
+print("X_test null::",X_test.isna().sum().sum())
+print("Y_train null::",Y_train.isna().sum().sum())
+
+catcol = X_train.select_dtypes(include='object').columns
+
+# Save numerical variable
+numcol = X_train.select_dtypes(exclude='object').columns
+
+print("categorical variables: ", catcol.values ,"\n")
+print("numerical variables: ", numcol.values)
+
+
+X_train[catcol[0]].values
+### Compare models
+model1 = LinearRegression()
+model1.fit(x_train, y_train)
+model1pred = model1.predict(x_val)
+
+cross_val1 = cross_val_score(model1, x_val, y_val, cv=3, scoring='r2').mean()
+r2_score1 = r2_score(y_val, model1pred)
+
+print("model: linear regression")
+print("cross validation score(R2) mean: ", cross_val1)
+print("predicted value score(R2): ", r2_score1)
 
