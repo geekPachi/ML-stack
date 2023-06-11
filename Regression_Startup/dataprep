@@ -1,1 +1,29 @@
+import pandas as pd
+import numpy as np
 
+import matplotlib.pyplot as plt,seaborn as sn
+df=pd.read_csv(dirname+'/'+filename)
+df
+
+df.info()
+
+x=df.iloc[:,:-1].values
+y=df.iloc[:,-1].values
+
+import sklearn as sk
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split as tts
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import r2_score
+en=LabelEncoder()
+x[:,-1]=en.fit_transform(x[:,-1])
+
+x_train,x_test,y_train,y_test=tts(x,y,test_size=0.1)
+model=LinearRegression()
+model.fit(x_train,y_train)
+
+#predict
+y_pred=model.predict(x_test)
+
+#check the accuracy
+r2_score(y_test,y_pred)
