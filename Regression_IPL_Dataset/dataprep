@@ -1,1 +1,58 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import matplotlib.pyplot as plt # data visualization
+import seaborn as sns # data visualization
+import plotly.graph_objs as go
+import plotly.express as px
+import cufflinks as cf
+cf.go_offline()
+cf.set_config_file(offline=False, world_readable=True)
+
+df1 = pd.read_csv('/kaggle/input/ipldata/deliveries.csv')
+df1
+
+df1.isna().sum().sort_values(ascending=False)/len(df1)*100
+
+df1.drop(['fielder','player_dismissed'],axis=1,inplace=True)#drop the higher % null columns from datase
+
+df1.duplicated().sum()
+
+df1.drop_duplicates(inplace=True)
+
+df1.isna().sum()
+
+df1.describe().T
+
+plt.figure(figsize = (12,8))
+sns.countplot(y='batsman',order = df1['batsman'].value_counts().index[0:10],data = df1,palette='icefire')
+plt.title('Top-10 Batsman Runs in IPL')
+
+runs=df1.groupby(['match_id','inning','batting_team'])['total_runs'].sum().reset_index()
+runs.drop('match_id',axis=1,inplace=True)
+inn1=runs[runs['inning'] == 1]
+
+fig = px.histogram(inn1,color= 'batting_team',x='batting_team',y='total_runs',title='1st Inns Batting Team Total Scores Throuhout IPL', text_auto='.2s',height = 700)
+fig.show()
+
+runs=df1.groupby(['match_id','inning','batting_team'])['total_runs'].sum().reset_index()
+runs.drop('match_id',axis=1,inplace=True)
+inn1=runs[runs['inning'] == 2]
+
+high_score = df1.groupby(['match_id','inning','batting_team','bowling_team'])['total_runs'].sum().reset_index()
+score_200 = high_score[high_score['total_runs'] >= 200]
+
+score_200_counts = list(score_200['batting_team'].value_counts())
+score_200_ls = list(score_200['batting_team'].value_counts().index)
+fig = px.pie(df1,values=score_200_counts,names=score_200_ls,color_discrete_sequence=px.colors.sequential.Turbo)
+fig.update_layout(title_text='Number of teams score more than 200', title_x=0.5,height = 900)
+fig.update_traces(textposition='inside',textinfo='label+percent+value')
+fig.show()
+
+score_200_counts = list(score_200['bowling_team'].value_counts())
+score_200_ls = list(score_200['bowling_team'].value_counts().index)
+fig = px.pie(df1,values=score_200_counts,names=score_200_ls,color_discrete_sequence=px.colors.sequential.dense)
+fig.update_layout(title_text="200 Concede Teams", title_x=0.5,height = 900)
+fig.update_traces(textposition='inside',textinfo='label+percent+value')
+fig.show()
+
 
