@@ -1,1 +1,44 @@
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+import seaborn as sns
+sns.set(rc={'figure.figsize':(11.7,8.27)});
 
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+        
+df = pd.read_csv('/kaggle/input/predict-baseball-players-position/baseball_players.csv')
+df
+
+chart = sns.boxplot(x="Position", y="Age", data=df)
+chart.set_xticklabels(chart.get_xticklabels(), rotation=45);
+
+chart = sns.boxplot(x="Position", y="Height(inches)", data=df)
+chart.set_xticklabels(chart.get_xticklabels(), rotation=45);
+
+chart = sns.boxplot(x="Position", y="Weight(pounds)", data=df)
+chart.set_xticklabels(chart.get_xticklabels(), rotation=45);
+
+g = sns.jointplot(
+    data=df,
+    x="Weight(pounds)", y="Height(inches)", hue="Position",
+    kind="kde",
+)
+
+
+g = sns.jointplot(
+    data=df,
+    x="Weight(pounds)", y="Height(inches)",
+    kind="kde",
+)
+
+sns.relplot(x="Height(inches)", y="Age", hue="Position", size="Weight(pounds)",
+            sizes=(400, 400), alpha=.5, palette="muted",
+            height=6, data=df)
+            
+g = sns.jointplot(
+    data=df,
+    x="Age", y="Weight(pounds)", hue="Position",
+    kind="kde",
+)
