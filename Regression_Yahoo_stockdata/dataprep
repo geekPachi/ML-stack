@@ -1,0 +1,44 @@
+import time
+import numpy as np
+import pandas as pd
+import pandas_datareader as pdr
+
+from keras.layers import LSTM
+from keras.models import Sequential
+from keras.layers.wrappers import TimeDistributed
+from keras.layers.core import Dense, Activation, Dropout
+
+from sklearn.preprocessing import MinMaxScaler
+
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+import pandas_datareader as pdr
+def get_raw_data(index_name,retry_attempts = 3):   
+    if index_name:
+        while retry_attempts > 0 :
+            try:
+                df = pdr.get_data_yahoo(index_name)
+                new_df = df.reindex(index=pd.date_range(df.index.min(), 
+                                          df.index.max(), 
+                                          freq='D')).fillna(method='ffill')
+                retry_attempts = 0
+                return new_df
+            except:
+                print("Data pull failed. {} retry attempts remaining".\
+                      format(retry_attempts))
+                retry_attempts = retry_attempts - 1
+    else:
+        print("Invalid usage. Parameter index_name is required")
+    return None
+    
+sp_df = get_raw_data('^GSPC')
+sp_close_series = sp_df.Close
+plt.style.use('seaborn-poster')
+sp_close_series.plot(figsize=(15, 7), color = 'teal')
+sp_df.head()
+
+sp_df.index.min(), sp_df.index.max()
+
