@@ -1,0 +1,53 @@
+import numpy as np
+import pandas as pd
+
+import warnings
+warnings.filterwarnings('ignore')
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+        
+gold_df = pd.read_csv('../input/gold-forecasting/GoldUP.csv')
+gold_df.head()
+
+import seaborn as sns
+sns.heatmap(gold_df.corr(), annot=True)
+
+new_columns = ['Date', 'Gold Price', 'Crude Oil', 'Interest Rate', 'USD INR', 'Sensex', 'CPI', 'USD Index']
+gold_df.columns = new_columns
+
+gold_df.head()
+
+dates = gold_df['Date']
+for i in range(0, len(gold_df['Date'])):
+    gold_df['Date'][i] = gold_df['Date'][i][3:]
+    
+print(gold_df['Date'])
+
+gold_df['Date'] = pd.to_datetime(gold_df['Date'])
+gold_df.set_index('Date', drop=True, inplace=True)
+gold_df.head()
+
+gold_df.index.year[0], gold_df.index.month[0], gold_df.index.day[0]
+
+gold_df.drop(['Crude Oil', 'Interest Rate', 'USD INR', 'Sensex', 'CPI', 'USD Index'],
+             axis=1, inplace=True)
+             
+gold_df['Tomorrow price'] = gold_df['Gold Price'].shift(-1)
+gold_df = gold_df.dropna()
+gold_df.columns = ['Actual Price', 'Tomorrow Price']
+gold_df['Actual Price'] = gold_df['Actual Price'].astype(float)
+gold_df.head()
+
+from sklearn.preprocessing import MinMaxScaler
+
+scaler = MinMaxScaler()
+
+gold_df = pd.DataFrame(data=scaler.fit_transform(gold_df), columns=gold_df.columns, index=gold_df.index)
+gold_df.head()
+
+gold_df = gold_df[3:]
+gold_df.head()
+
