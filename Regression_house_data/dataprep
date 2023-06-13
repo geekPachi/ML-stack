@@ -1,0 +1,37 @@
+import pandas as pd
+import numpy as np
+
+df = pd.read_csv('feature_score_sort.csv')
+df.info()
+df.describe()
+df.isnull().sum()
+df.dtypes
+from sklearn.impute import SimpleImputer
+
+imputer = SimpleImputer(strategy='mean')
+
+df['score_xgb'] = imputer.fit_transform(df[['score_xgb']])
+df.isnull().sum()
+df
+df.dtypes
+x = df.iloc[:,:-1].values
+y = df.iloc[:,-1].values
+from sklearn.model_selection import train_test_split
+
+x_train, x_test, y_train, y_test = train_test_split(x,y,test_size=0.2, random_state=42)
+from sklearn.linear_model import LinearRegression
+
+model = LinearRegression()
+
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+y_test_reshaped = y_test.reshape(-1, 1)
+y_pred_reshaped = y_pred.reshape(-1, 1)
+
+# Concatenate y_test_reshaped and y_pred_reshaped
+concatenated = np.concatenate((y_test_reshaped, y_pred_reshaped), axis=1)
+
+concatenated
+from sklearn.metrics import r2_score
+
+r2_score(y_test, y_pred)
