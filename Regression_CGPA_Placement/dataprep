@@ -1,24 +1,31 @@
-import torch
-from torch import nn
 import pandas as pd
-from sklearn.model_selection import train_test_split
 import numpy as np
-import matplotlib.pyplot as plt
+df = pd.read_csv('placement.csv')
+df.shape
+df.isnull().sum()
+x = df.iloc[:,:-1].values
+y = df.iloc[:,-1].values
+from sklearn.model_selection import train_test_split
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print(f"Using device: {device}")
+x_train, x_test, y_train, y_test = train_test_split(x,y, test_size=0.2, random_state=42 )
 
-df = pd.read_csv("/kaggle/input/cgpa-vs-package-in-lpa/placement.csv")
-
-X = df['cgpa']
-Y = df['package']
-
-plt.scatter(X,Y)
-
-x_train,x_test,y_train,y_test = train_test_split(X, Y, random_state=42, test_size=0.2)
-
-x_train.size,y_train.size
-
-x_test, torch.from_numpy(np.array(x_test))
+from sklearn.svm import SVR
 
 
+model =  SVR()
+
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+y_pred
+y_test
+model.predict(np.array([[8]]))
+from sklearn.metrics import r2_score, mean_squared_error
+
+print(r2_score(y_test, y_pred))
+
+mse = mean_squared_error(y_test, y_pred)
+
+rmse =  np.sqrt(mse)
+
+rmse
+# accuracy_score(y_test, y_pred)
