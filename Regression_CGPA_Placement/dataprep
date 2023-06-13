@@ -1,1 +1,24 @@
+import torch
+from torch import nn
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import numpy as np
+import matplotlib.pyplot as plt
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using device: {device}")
+
+df = pd.read_csv("/kaggle/input/cgpa-vs-package-in-lpa/placement.csv")
+
+X = df['cgpa']
+Y = df['package']
+
+plt.scatter(X,Y)
+
+x_train,x_test,y_train,y_test = train_test_split(X, Y, random_state=42, test_size=0.2)
+
+x_train.size,y_train.size
+
+x_test, torch.from_numpy(np.array(x_test))
+
 
