@@ -1,1 +1,25 @@
+indicator Variable: Creating an additional binary indicator variable to represent missingness.
+
+In this example, we have a DataFrame df with two variables: 'X' and 'Y'. We want to create binary indicator variables, 
+'X_missing' and 'Y_missing', to represent the missingness of values in the respective columns. 
+The isnull() method checks whether each value is missing (null/NaN) and returns a boolean mask. By applying the astype(int) method, 
+we convert the boolean values to integers, where missing values are represented as 1 and non-missing values as 0.
+
+
+import pandas as pd
+
+# Create a sample dataframe with missing values
+data = {
+    'X': [1, 2, 3, None, 5],
+    'Y': [6, None, 8, 9, 10]
+}
+df = pd.DataFrame(data)
+
+# Create binary indicator variables for missingness
+df['X_missing'] = df['X'].isnull().astype(int)
+df['Y_missing'] = df['Y'].isnull().astype(int)
+
+print(df)
+
+
 
