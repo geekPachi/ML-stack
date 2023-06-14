@@ -1,1 +1,16 @@
+# if empty cells = 70% 
+
+df = df.dropna()  # deletes defaultly the rows in df that contains empty cells
+
+df = df.drop('column_name',axis=1)  # deletes the whole column in a dataset
+
+
+
+
+
+
+
+
+
+
 
