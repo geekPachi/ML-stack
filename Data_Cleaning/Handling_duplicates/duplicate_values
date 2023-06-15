@@ -1,1 +1,16 @@
+# Removing the duplicate data using pandas drop
+
+
+1. To identify duplicates
+   
+ 
+
+df = pd.DataFrame(data)
+df_duplicates = df[df.duplicated()]
+   
+
+# Remove duplicate rows based on all columns
+df_no_duplicates = df.drop_duplicates()
+
+print(df_no_duplicates)
 
