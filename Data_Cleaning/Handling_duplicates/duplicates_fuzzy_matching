@@ -1,0 +1,21 @@
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+import pandas as pd
+
+# Create a sample dataframe with near-duplicate records
+data = {
+    'ID': [1, 2, 3, 4, 5],
+    'Name': ['John Doe', 'John Doe', 'John Smith', 'Jon Doe', 'Jane Smith']
+}
+df = pd.DataFrame(data)
+
+# Calculate similarity score between Name column values using fuzz ratio
+df['Similarity'] = df['Name'].apply(lambda x: fuzz.ratio(x, 'John Doe'))
+
+# Set a similarity threshold
+similarity_threshold = 90
+
+# Identify near-duplicate records based on the similarity threshold
+near_duplicates = df[df['Similarity'] >= similarity_threshold]
+
+print(near_duplicates)
