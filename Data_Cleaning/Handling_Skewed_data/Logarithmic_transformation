@@ -1,1 +1,23 @@
+# the below code checks the skewness in each column of a dataset
+
+if skew == zero, 
+     Then its good to go
+elif skew>zero
+     then positive skewness
+else 
+     negetive skewness
+
+
+
+from scipy.stats import skew
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+for col in df_num:
+    print(col)
+    print(skew(df_num[col]))
+
+    plt.figure()
+    sns.distplot(df_num[col])
+    plt.show()
 
