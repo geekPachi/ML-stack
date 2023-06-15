@@ -1,0 +1,28 @@
+import pandas as pd
+
+# Load the dataset
+df = pd.read_csv('dataset.csv')
+
+# Define consistency rules
+# Example: Check if 'age' column is within a specific range
+age_min = 18
+age_max = 65
+age_check = (df['age'] >= age_min) & (df['age'] <= age_max)
+
+# Example: Check if 'gender' column contains only 'Male' or 'Female'
+gender_values = ['Male', 'Female']
+gender_check = df['gender'].isin(gender_values)
+
+# Example: Check if 'income' column is greater than zero
+income_check = df['income'] > 0
+
+# Perform consistency checks
+# Combine all the checks using the AND operator
+consistency_check = age_check & gender_check & income_check
+
+# Identify inconsistent rows
+inconsistent_rows = df[~consistency_check]
+
+# Print the inconsistent rows
+print("Inconsistent Rows:")
+print(inconsistent_rows)
